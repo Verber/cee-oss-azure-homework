@@ -1,0 +1,29 @@
+{
+    "minimum-stability": "dev",
+    "name": "Verber/oss-azure-homework",
+    "description": "Homework before training in Warsaw",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ivan Mosiev",
+            "email": "ivan.mosiev@altexsoft.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "pear",
+            "url": "http://pear.php.net"
+        }
+    ],
+    "require": {
+        "silex/silex": "~1.1",
+        "symfony/console": "2.3.x-dev",
+        "microsoft/windowsazure": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~3.7"
+    },
+    "autoload": {
+        "psr-0": { "Verber": "src/" }
+    }
+}
