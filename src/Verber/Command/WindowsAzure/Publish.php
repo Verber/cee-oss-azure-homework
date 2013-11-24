@@ -15,31 +15,24 @@ class Publish extends Command
             ->setName('azure:publish')
             ->setDescription('Setup Ubuntu virtual machine on Windows Azure')
             ->addArgument(
-                'name',
+                'region',
                 InputArgument::OPTIONAL,
-                'Who do you want to greet?'
+                'What region are you going to deploy your application?',
+                'West Europe'
             )
-            ->addOption(
-                'yell',
-                null,
-                InputOption::VALUE_NONE,
-                'If set, the task will yell in uppercase letters'
-            )
-        ;
+            ->addArgument(
+                'size',
+                InputArgument::OPTIONAL,
+                'What size of virtual machine are you going to use?',
+                'Small'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $name = $input->getArgument('name');
-        if ($name) {
-            $text = 'Hello '.$name;
-        } else {
-            $text = 'Hello';
-        }
-
-        if ($input->getOption('yell')) {
-            $text = strtoupper($text);
-        }
+        $region = $input->getArgument('region');
+        $size = $input->getArgument('size');
+        $text = 'Region ' . $region . ' size ' . $size;
 
         $output->writeln($text);
     }
