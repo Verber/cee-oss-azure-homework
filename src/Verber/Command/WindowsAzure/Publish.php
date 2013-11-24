@@ -24,7 +24,7 @@ class Publish extends Command
                 'size',
                 InputArgument::OPTIONAL,
                 'What size of virtual machine are you going to use?',
-                'Small'
+                'small'
             );
     }
 
@@ -32,7 +32,7 @@ class Publish extends Command
     {
         $region = $input->getArgument('region');
         $size = $input->getArgument('size');
-        $text = 'Region ' . $region . ' size ' . $size;
+        $text = 'Creating VM in  ' . $region . ' size ' . $size;
 
         $output->writeln($text);
     }
