@@ -6,7 +6,7 @@
  * Time: 23:49
  */
 
-namespace Verber\Command\WindowsAzure;
+namespace Verber\Console\Command\WindowsAzure;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,7 +19,6 @@ class ImportPublishSettings extends Command
 {
     protected function configure()
     {
-        $app = $this->getApplication();
         $this
             ->setName('azure:import-publish-settings')
             ->setDescription('Import publish settings credentials from Azure')

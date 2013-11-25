@@ -6,7 +6,7 @@
  * Time: 1:16
  */
 
-namespace Verber\Command\WindowsAzure;
+namespace Verber\Console\Command\WindowsAzure;
 
 
 class Exception extends \Exception
