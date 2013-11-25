@@ -24,6 +24,9 @@ class SilexAwareApplication extends Application
         return $this;
     }
 
+    /**
+     * @return \Silex\Application
+     */
     public function getSilex()
     {
         return $this->silexApp;

@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Process\ProcessBuilder;
 
 class ImportPublishSettings extends Command
 {
@@ -32,10 +33,16 @@ class ImportPublishSettings extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $commandLine = 'azure account import ' . realpath($input->getArgument('credentials_file'));
-        $azureProcess = new Process($commandLine);
+        /** @var ProcessBuilder $azureProcessBuilder */
+        $azureProcessBuilder = $this->getApplication()->getSilex()['process_builder'];
+        $azureProcessBuilder->setPrefix('azure')
+            ->setArguments(array('account', 'import', realpath($input->getArgument('credentials_file'))));
+        $azureProcess = $azureProcessBuilder->getProcess();
         $azureProcess->run();
         if ($azureProcess->getExitCode() > 0) {
             throw new Exception($azureProcess->getErrorOutput());
+        } else {
+            $output->writeln($azureProcess->getOutput());
         }
     }
 
