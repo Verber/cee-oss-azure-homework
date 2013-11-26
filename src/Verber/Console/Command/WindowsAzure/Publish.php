@@ -60,7 +60,7 @@ class Publish extends Command
         $output->writeln("\tdone");
         $output->writeln('Waiting for start:');
         while (!$this->isVMUp($input)) {
-            sleep(1);
+            sleep(10);
             $output->write('.');
         }
         $output->writeln('OK');
