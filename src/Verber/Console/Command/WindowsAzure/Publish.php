@@ -54,17 +54,17 @@ class Publish extends Command
 
         $this->sshConnectString = $this->getApplication()->getSilex()['azure']['default_user_name']
             . '@' . $input->getArgument('dns_name') . '.cloudapp.net';
-//
-//        $output->writeln('Creating Azure VM');
-//        $this->createVM($input, $output);
-//        $output->writeln("\tdone");
-//        $output->writeln('Waiting for start:');
-//        while (!$this->isVMUp($input)) {
-//            sleep(1);
-//            $output->write('.');
-//        }
-//        $output->writeln('OK');
-//        $output->writeln('Azure VM is up and running');
+
+        $output->writeln('Creating Azure VM');
+        $this->createVM($input, $output);
+        $output->writeln("\tdone");
+        $output->writeln('Waiting for start:');
+        while (!$this->isVMUp($input)) {
+            sleep(1);
+            $output->write('.');
+        }
+        $output->writeln('OK');
+        $output->writeln('Azure VM is up and running');
 
 
         $output->writeln('Uploading setup file');
