@@ -10,7 +10,7 @@ use Symfony\Component\Process\ProcessBuilder;
 
 class Publish extends Command
 {
-    private $certFile, $sshConnectString;
+    private $privateKey, $sshConnectString;
 
     protected function configure()
     {
@@ -45,39 +45,47 @@ class Publish extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->certFile = $input->getArgument('key');
-        if (!$this->certFile) {
-            $this->certFile = realpath(
+        $this->privateKey = $input->getArgument('key');
+        if (!$this->privateKey) {
+            $this->privateKey = realpath(
                 $this->getApplication()->getSilex()['appdir'] . DS . 'config' . DS . 'mycert.key'
             );
         }
 
+        $this->publicKey = preg_replace('/\.key$/', '.pem', $this->privateKey);
+
         $this->sshConnectString = $this->getApplication()->getSilex()['azure']['default_user_name']
             . '@' . $input->getArgument('dns_name') . '.cloudapp.net';
 
-        $output->writeln('Creating Azure VM');
-        $this->createVM($input, $output);
+//        $output->writeln('Creating Azure VM');
+//        $this->createVM($input, $output);
+//        $output->writeln("\tdone");
+//        $output->writeln('Waiting for start:');
+//        while (!$this->isVMUp($input)) {
+//            sleep(10);
+//            $output->write('.');
+//        }
+//        $output->writeln('OK');
+//        $output->writeln('Azure VM is up and running');
+//
+//
+//        $output->writeln('Uploading setup file');
+//        $this->uploadSetupFile();
+//        $output->writeln("\tdone");
+//
+//        $output->writeln('Set executable flag fro setup file');
+//        $this->setExecFlagOnSetupFile();
+//        $output->writeln("\tdone");
+//
+//        $output->writeln('Runing setup file');
+//        $this->runSetup();
+//        $output->writeln("\tdone");
+
+        $output->writeln('Opening web port');
+        $this->openWebEndpoint($input, $output);
         $output->writeln("\tdone");
-        $output->writeln('Waiting for start:');
-        while (!$this->isVMUp($input)) {
-            sleep(10);
-            $output->write('.');
-        }
-        $output->writeln('OK');
-        $output->writeln('Azure VM is up and running');
 
 
-        $output->writeln('Uploading setup file');
-        $this->uploadSetupFile();
-        $output->writeln("\tdone");
-
-        $output->writeln('Set executable flag fro setup file');
-        $this->setExecFlagOnSetupFile();
-        $output->writeln("\tdone");
-
-        $output->writeln('Runing setup file');
-        $this->runSetup();
-        $output->writeln("\tdone");
     }
 
     private function runSetup()
@@ -88,7 +96,7 @@ class Publish extends Command
         $process = $sshProcessBuilder->getProcess();
         $process->setCommandLine(
             'ssh -oStrictHostKeyChecking=no -i'
-            . ' ' . $this->certFile
+            . ' ' . $this->privateKey
             . ' ' . $this->sshConnectString
             . " '/home/azure/setup.sh'"
         );
@@ -106,7 +114,7 @@ class Publish extends Command
         $process = $sshProcessBuilder->getProcess();
         $process->setCommandLine(
            'ssh -oStrictHostKeyChecking=no -i'
-            . ' ' . $this->certFile
+            . ' ' . $this->privateKey
             . ' ' . $this->sshConnectString
             . " 'chmod +x /home/azure/setup.sh'"
         );
@@ -123,7 +131,7 @@ class Publish extends Command
         $scpProcessBuilder->setPrefix('scp')
             ->setArguments(array(
                 '-oStrictHostKeyChecking=no',
-                '-i', $this->certFile,
+                '-i', $this->privateKey,
                 './scripts/setup.sh',
                 $this->sshConnectString . ':~'
             ));
@@ -161,6 +169,30 @@ class Publish extends Command
         }
     }
 
+    private function openWebEndpoint(InputInterface $input, OutputInterface $output)
+    {
+        /** @var ProcessBuilder $azureProcessBuilder */
+        $azureProcessBuilder = $this->getApplication()->getSilex()['process_builder'];
+        $azureProcessBuilder->setPrefix('azure')
+            ->setArguments(array(
+                'vm', 'endpoint', 'create',
+                $input->getArgument('dns_name'),
+                '80'
+            ))
+            ->setTimeout(null);
+        $azureProcess = $azureProcessBuilder->getProcess();
+
+        $output->writeln($azureProcess->getCommandLine());
+        $azureProcess->run();
+        while ($azureOut = $azureProcess->getIncrementalOutput() || $azureProcess->isRunning()) {
+            $output->write($azureOut);
+            sleep(1);
+        }
+        if ($azureProcess->getExitCode() > 0) {
+            throw new Exception($azureProcess->getErrorOutput());
+        }
+    }
+
     private function createVM(InputInterface $input, OutputInterface $output)
     {
         /** @var ProcessBuilder $azureProcessBuilder */
@@ -171,7 +203,7 @@ class Publish extends Command
                 '--location', $input->getArgument('region'),
                 '--vm-size', $input->getArgument('size'),
                 '--ssh', '22',
-                '--ssh-cert', $this->certFile,
+                '--ssh-cert', $this->publicKey,
                 '--no-ssh-password',
                 $input->getArgument('dns_name'),
                 $this->getApplication()->getSilex()['azure']['image'],
