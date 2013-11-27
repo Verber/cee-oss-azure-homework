@@ -57,29 +57,29 @@ class Publish extends Command
         $this->sshConnectString = $this->getApplication()->getSilex()['azure']['default_user_name']
             . '@' . $input->getArgument('dns_name') . '.cloudapp.net';
 
-//        $output->writeln('Creating Azure VM');
-//        $this->createVM($input, $output);
-//        $output->writeln("\tdone");
-//        $output->writeln('Waiting for start:');
-//        while (!$this->isVMUp($input)) {
-//            sleep(10);
-//            $output->write('.');
-//        }
-//        $output->writeln('OK');
-//        $output->writeln('Azure VM is up and running');
-//
-//
-//        $output->writeln('Uploading setup file');
-//        $this->uploadSetupFile();
-//        $output->writeln("\tdone");
-//
-//        $output->writeln('Set executable flag fro setup file');
-//        $this->setExecFlagOnSetupFile();
-//        $output->writeln("\tdone");
-//
-//        $output->writeln('Runing setup file');
-//        $this->runSetup();
-//        $output->writeln("\tdone");
+        $output->writeln('Creating Azure VM');
+        $this->createVM($input, $output);
+        $output->writeln("\tdone");
+        $output->writeln('Waiting for start:');
+        while (!$this->isVMUp($input)) {
+            sleep(10);
+            $output->write('.');
+        }
+        $output->writeln('OK');
+        $output->writeln('Azure VM is up and running');
+
+
+        $output->writeln('Uploading setup file');
+        $this->uploadSetupFile();
+        $output->writeln("\tdone");
+
+        $output->writeln('Set executable flag fro setup file');
+        $this->setExecFlagOnSetupFile();
+        $output->writeln("\tdone");
+
+        $output->writeln('Runing setup file');
+        $this->runSetup();
+        $output->writeln("\tdone");
 
         $output->writeln('Opening web port');
         $this->openWebEndpoint($input, $output);
@@ -92,7 +92,9 @@ class Publish extends Command
     {
         /** @var ProcessBuilder $sshProcessBuilder */
         $sshProcessBuilder = $this->getApplication()->getSilex()['process_builder'];
-        $sshProcessBuilder->setPrefix('ssh')->setArguments(array());
+        $sshProcessBuilder->setPrefix('ssh')
+            ->setArguments(array())
+            ->setTimeout(null);
         $process = $sshProcessBuilder->getProcess();
         $process->setCommandLine(
             'ssh -oStrictHostKeyChecking=no -i'
