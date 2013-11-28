@@ -20,6 +20,7 @@ class Delete extends Command
     {
         $this
             ->setName('azure:delete')
+            ->setDescription('Delete VM from azure')
             ->addArgument(
                 'dns_name',
                 InputArgument::REQUIRED,
