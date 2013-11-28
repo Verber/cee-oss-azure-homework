@@ -8,6 +8,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\ProcessBuilder;
 
+/**
+ * TODO: change azure cli tools calls on PHP SDK calls where it is possible
+ * TODO: change wrapped ssh calls on commonly used ssh libraries for php
+ */
 class Publish extends Command
 {
     private $privateKey, $sshConnectString;
