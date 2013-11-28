@@ -40,7 +40,6 @@ class SayHello extends Command
         $client = new Client('http://' . $input->getArgument('dns_name') . '.cloudapp.net');
         $request = $client->get('/hello/' . $input->getArgument('name'));
         $response = $client->send($request);
-        //$output->writeln($response);
-        var_dump($response);
+        $output->writeln($response->getBody(true));
     }
 } 
