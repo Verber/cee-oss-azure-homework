@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt-get install -y nginx php5 php5-cli php5-fpm git
+sudo apt-get install -y nginx php5 php5-cli php5-fpm php5-curl git
 
 sudo rm /etc/nginx/sites-enabled/default
 
