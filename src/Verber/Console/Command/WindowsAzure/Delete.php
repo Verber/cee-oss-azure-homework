@@ -49,6 +49,27 @@ class Delete extends Command
         if ($azureProcess->getExitCode() > 0) {
             throw new Exception($azureProcess->getErrorOutput());
         }
+
+        /** @var ProcessBuilder $azureProcessBuilder */
+        $azureProcessBuilder = $this->getApplication()->getSilex()['process_builder'];
+        $azureProcessBuilder->setPrefix('azure')
+            ->setArguments(array(
+                'service', 'delete', '-q',
+                $input->getArgument('dns_name')
+            ))
+            ->setTimeout(null);
+        $azureProcess = $azureProcessBuilder->getProcess();
+
+        $output->writeln($azureProcess->getCommandLine());
+        $azureProcess->run();
+        while ($azureOut = $azureProcess->getIncrementalOutput() || $azureProcess->isRunning()) {
+            $output->write($azureOut);
+            sleep(1);
+        }
+        if ($azureProcess->getExitCode() > 0) {
+            throw new Exception($azureProcess->getErrorOutput());
+        }
+
         $output->writeln("\tdone");
     }
 

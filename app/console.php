@@ -7,6 +7,7 @@ use Verber\Console\SilexAwareApplication as ConsoleApp;
 use Verber\Console\Command\WindowsAzure\Publish;
 use Verber\Console\Command\WindowsAzure\ImportPublishSettings;
 use Verber\Console\Command\WindowsAzure\Delete;
+use Verber\Console\Command\WindowsAzure\SayHello;
 
 $app['process_builder'] = function() {
     return new ProcessBuilder();
@@ -17,4 +18,5 @@ $console->setSilex($app);
 $console->add(new Publish());
 $console->add(new ImportPublishSettings());
 $console->add(new Delete());
+$console->add(new SayHello());
 $console->run();
