@@ -8,4 +8,6 @@ Then you need to get publishing sertificate for Windows Azure (see http://www.wi
 
 Also you will need pem and key files to connect to linuz machine. To generate it use opensssl
 
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout myPrivateKey.key -out myCert.pem
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout mycert.key -out mycert.pem
+
+And don't forget about composer install
